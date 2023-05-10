@@ -15,6 +15,8 @@ m_2 = 1.0;          % kg
 % gravity defined as a constant
 g = 9.81;           % m/s^2
 
+
+
 % initial values for theta
 theta_1    = 0; 
 theta_2    = deg2rad(0); 
@@ -34,9 +36,9 @@ deltaT = 0.01;
 
 
 % NOTE: use the following 
-theta_iter_save   = zeros(0,2);     % joint angles over time for plot
-p_1_iter_save     = zeros(0,2);     % p1 position over time for plot
-p_2_iter_save     = zeros(0,2);     % p2 position over time for plot
+theta_iter_save   = zeros(0,2);     % joint positions over time
+p_1_iter_save     = zeros(0,2);     
+p_2_iter_save     = zeros(0,2);
 
 
 for t=0:deltaT:5
@@ -72,12 +74,13 @@ for t=0:deltaT:5
 
 
 
+
+   
         
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
     % implement the inverse dynamics equation 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
-    tau = [0; 0]
     vec_dd_theta =  inv(M)*(tau - c - g_vec);
 
 
@@ -87,17 +90,14 @@ for t=0:deltaT:5
     % integrate acceleration to get velocity
     vec_d_theta = vec_d_theta + deltaT * vec_dd_theta;
 
-
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
     % model friction
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
     friction_decrease = 0.01;
-    vec_d_theta       = (1 - friction_decrease)*vec_d_theta;
+    vec_d_theta = (1 - friction_decrease)*vec_d_theta;
 
     % integrate velocity to get position
     vec_theta = vec_theta + deltaT * vec_d_theta;
 
-    % forward kinematics to get cartesian point of the two joints
+    % implement forward kinematics to get cartesian point of the two joints
     x_1 = L_1 * cos(vec_theta(1)); 
     y_1 = L_1 * sin(vec_theta(1));
 
@@ -106,17 +106,15 @@ for t=0:deltaT:5
 
     p_1_iter_save       = [p_1_iter_save; [x_1, y_1]];
     p_2_iter_save       = [p_2_iter_save; [x_2, y_2]];
+    
     theta_iter_save     = [theta_iter_save; vec_theta'];
 
+    theta_1 = vec_theta(1); 
+    theta_2 = vec_theta(2); 
 
-
-    
-
-    % update all variables for the next iteration
-    theta_1   = vec_theta(1); 
-    theta_2   = vec_theta(2); 
     d_theta_1 = vec_d_theta(1);
     d_theta_2 = vec_d_theta(2);
+
 end
 
 
@@ -126,7 +124,6 @@ end
 
 
 figure(1);
-n = length(p_1_iter_save(:,1))
 for i=1:n    
     % mark the joint weight in the plot
     plot(p_1_iter_save(i,1), p_1_iter_save(i,2), 'rx')
