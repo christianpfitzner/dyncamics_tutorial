@@ -16,9 +16,10 @@ m_2 = 1.0;          % kg
 g = 9.81;           % m/s^2
 
 % initial values for theta
-theta_1    = 0; 
-theta_2    = deg2rad(0); 
+theta_1    = deg2rad(0); 
+theta_2    = deg2rad(90); 
 vec_theta  = [theta_1; theta_2];
+tau        = [0; 0]
 
 % initial values for d theta
 d_theta_1  = 0; 
@@ -45,30 +46,25 @@ for t=0:deltaT:5
     % implement here the mass matrix
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
 
-    M_11 = m_1*L_1^2 + m_2*(L_1^2 + 2*L_1*L_2*cos(theta_2) + L_2^2); 
-    M_12 = m_2*(L_1*L_2*cos(theta_2) + L_2^2);
-    M_21 = m_2*(L_1*L_2*cos(theta_2) + L_2^2);
-    M_22 = m_2*L_2^2;
     
-    M = [M_11 M_12; 
-         M_21 M_22];
-    
+    % !! remove the following line if you finished your implementation
+    M = eye(2); 
+
+        
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
     % implement here the coriolis vector
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
-    c_1 = -m_2*L_1*L_2*sin(theta_2)*(2*d_theta_1*d_theta_2 + d_theta_2^2); 
-    c_2 =  m_2*L_1*L_2*d_theta_1*sin(theta_2);
-    
-    c = [c_1; c_2]
-    
+
+
+    % !! remove the following line if you finished your implementation
+    c = [0; 0]
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
     % implement here the gravity vector
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
-    g_1 = (m_1+m_2)*L_1*g*cos(theta_1) + m_2*L_2*g*cos(theta_1+theta_2);
-    g_2 = m_2      *L_2*g*cos(theta_1+theta_2)
-    
-    g_vec = [g_1; g_2]; 
+
+    % !! remove the following line if you finished your implementation
+    g_vec = [0; 0]
 
 
 
@@ -77,11 +73,9 @@ for t=0:deltaT:5
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
     % implement the inverse dynamics equation 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
-    tau = [0; 0]
-    vec_dd_theta =  inv(M)*(tau - c - g_vec);
-
-
-
+    
+    % !! remove the following line if you finished your implementation
+    vec_dd_theta = [0; 0]
 
 
     % integrate acceleration to get velocity
@@ -89,10 +83,9 @@ for t=0:deltaT:5
 
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
-    % model friction
+    % OPTIONAL: implement model friction
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
-    friction_decrease = 0.01;
-    vec_d_theta       = (1 - friction_decrease)*vec_d_theta;
+
 
     % integrate velocity to get position
     vec_theta = vec_theta + deltaT * vec_d_theta;
@@ -109,9 +102,6 @@ for t=0:deltaT:5
     theta_iter_save     = [theta_iter_save; vec_theta'];
 
 
-
-    
-
     % update all variables for the next iteration
     theta_1   = vec_theta(1); 
     theta_2   = vec_theta(2); 
@@ -124,7 +114,7 @@ end
 
 
 
-
+% plot everything
 figure(1);
 n = length(p_1_iter_save(:,1))
 for i=1:n    
@@ -143,4 +133,8 @@ for i=1:n
     axis square; 
     drawnow; 
 end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+% implement a visualization of the velocity of each joint
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
 
